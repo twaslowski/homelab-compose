@@ -1,0 +1,26 @@
+# Cloudflared Tunnel - Gateway for secure ingress to homelab
+
+services:
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflared
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run --token $TUNNEL_TOKEN
+    environment:
+      - TUNNEL_TOKEN="eyJhIjoiZWUzN2VhZGI0ZDYxZGQwMzY3MDg0NWRkYTVmZTFmY2UiLCJ0IjoiMGYxZTlmYjYtNjI3NC00MDI4LTlhZDgtMDIxOTk5YjU1MjQzIiwicyI6IlM0R3cvcGdFZlI2UUVHSHc5TDRXVjhwTTlSNGhISW9ScXJEWWljcDJhK1VNNjdtSEV2TGM4MXBPaEJHMUpiUWNnemVHK0dJV0U3L0dRVXNRd1Q5UEVnPT0ifQ=="
+    networks:
+      - homelab
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:2000/ready || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    volumes:
+      - ./cloudflared:/etc/cloudflared:ro
+
+networks:
+  homelab:
+    name: ${HOMELAB_NETWORK:-homelab}
+    driver: bridge
+
