@@ -1,5 +1,3 @@
-version: '3.8'
-
 # Memos Application Stack
 # A privacy-first, lightweight note-taking service
 services:
@@ -11,7 +9,7 @@ services:
       - MEMOS_DRIVER=postgres
       - MEMOS_DSN=postgresql://${MEMOS_DB_USER}:${MEMOS_DB_PASSWORD}@postgres:5432/${MEMOS_DB_NAME}?sslmode=disable
     volumes:
-      - memos_data:/var/opt/memos
+      - memos-data:/var/opt/memos
     networks:
       - homelab
       - memos
@@ -35,13 +33,12 @@ services:
       - POSTGRES_USER=${MEMOS_DB_USER}
       - POSTGRES_PASSWORD=${MEMOS_DB_PASSWORD}
       - POSTGRES_DB=${MEMOS_DB_NAME}
-      - PGDATA=/var/lib/postgresql/data/pgdata
     volumes:
-      - $HOMELAB_DATA_ROOT_DIR/memos/postgres:/var/lib/postgresql/data
+      - memos-pgdata:/var/lib/postgresql/data
     networks:
       - memos
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
+      test: [ "CMD-SHELL", "pg_isready -U ${MEMOS_DB_USER} -d ${MEMOS_DB_NAME}" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -49,6 +46,9 @@ services:
     ports:
       - "5432:5432"
 
+volumes:
+  memos-pgdata:
+  memos-data:
 
 networks:
   homelab:
