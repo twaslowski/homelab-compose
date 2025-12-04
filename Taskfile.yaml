@@ -23,3 +23,12 @@ tasks:
     cmds:
       - terraform fmt -recursive terraform/
       - yamlfix services/
+
+  apply:
+    desc: Apply terraform changes
+    dotenv:
+      - .env
+    dir: terraform/
+    cmds:
+      - terraform init -upgrade
+      - terraform apply -var-file=config/var.tfvars
