@@ -1,5 +1,4 @@
-# Memos Application Stack
-# A privacy-first, lightweight note-taking service
+---
 services:
   memos:
     image: neosmemo/memos:latest
@@ -8,23 +7,20 @@ services:
     environment:
       - MEMOS_DRIVER=postgres
       - MEMOS_DSN=postgresql://${MEMOS_DB_USER}:${MEMOS_DB_PASSWORD}@postgres:5432/${MEMOS_DB_NAME}?sslmode=disable
-    volumes:
-      - memos-data:/var/opt/memos
-    networks:
-      - homelab
-      - memos
+    volumes: [memos-data:/var/opt/memos]
+    networks: [homelab, memos]
     depends_on:
       postgres:
         condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "wget -q --spider http://localhost:5230/healthz || exit 1"]
+      test:
+        - CMD-SHELL
+        - wget -q --spider http://localhost:5230/healthz || exit 1
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 30s
-    ports:
-      - "5230:5230"
-
+    ports: [5230:5230]
   postgres:
     image: postgres:18-alpine
     container_name: homelab_postgres
@@ -33,23 +29,22 @@ services:
       - POSTGRES_USER=${MEMOS_DB_USER}
       - POSTGRES_PASSWORD=${MEMOS_DB_PASSWORD}
       - POSTGRES_DB=${MEMOS_DB_NAME}
-    volumes:
-      - memos-pgdata:/var/lib/postgresql/data
-    networks:
-      - memos
+    volumes: [memos-pgdata:/var/lib/postgresql/data]
+    networks: [memos]
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${MEMOS_DB_USER} -d ${MEMOS_DB_NAME}" ]
+      test: [CMD-SHELL, 'pg_isready -U ${MEMOS_DB_USER} -d ${MEMOS_DB_NAME}']
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 10s
-    ports:
-      - "5432:5432"
-
 volumes:
   memos-pgdata:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /Users/tobias.waslowski/projects/personal/homelab-2/data/memos/postgres
   memos-data:
-
 networks:
   homelab:
     external: true
@@ -57,4 +52,3 @@ networks:
   memos:
     driver: bridge
     name: memos-internal
-

@@ -1,0 +1,25 @@
+version: "3"
+tasks:
+  start:*:
+    desc: Run a specific service
+    dotenv:
+      - .env
+    vars:
+      service: "{{index .MATCH 0}}"
+    cmds:
+      - docker compose -f services/{{.service}}/docker-compose.yml up -d
+
+  stop:*:
+    desc: Run a specific service
+    dotenv:
+      - .env
+    vars:
+      service: "{{index .MATCH 0}}"
+    cmds:
+      - docker compose -f services/{{.service}}/docker-compose.yml down
+
+  fmt:
+    desc: Run formatter
+    cmds:
+      - terraform fmt -recursive terraform/
+      - yamlfix services/

@@ -19,3 +19,8 @@ variable "cloudflare_domain" {
   type        = string
 }
 
+variable "tunnel_name" {
+  description = "The name of the Cloudflare Tunnel."
+  type        = string
+}
+

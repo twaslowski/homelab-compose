@@ -1,7 +1,12 @@
 resource "cloudflare_dns_record" "memos" {
-  name    = "memos-2.${var.cloudflare_domain}"
-  ttl     = 0
+  for_each = local.urls
+
+  name    = each.value.hostname
   type    = "CNAME"
   content = "${cloudflare_zero_trust_tunnel_cloudflared.homelab_tunnel.id}.cfargotunnel.com"
+
+  ttl     = 1 # automatic
+  proxied = true
   zone_id = var.cloudflare_zone_id
+  comment = "managed-by:terraform;service:${each.key}"
 }
