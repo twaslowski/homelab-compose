@@ -43,7 +43,7 @@ volumes:
     driver_opts:
       o: bind
       type: none
-      device: /Users/tobias.waslowski/projects/personal/homelab-2/data/memos/postgres
+      device: ${HOMELAB_DATA_ROOT_DIR}/memos/postgres
   memos-data:
 networks:
   homelab:
