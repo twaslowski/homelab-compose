@@ -66,7 +66,7 @@ Migrate services:
   - [ ] systemd service
   - [ ] Backup strategy
 
-## Recovering Services
+## Runbook
 
 This section is mainly for me, as I figure out how to recover my cloudnative-pg databases into local Postgres
 containers.
@@ -79,4 +79,10 @@ Restore like this:
 ```bash
 docker cp data.sql <docker-memos-pg>:/data.sql
 docker exec -it <docker-memos-pg> psql -U memos -d memos -f /data.sql
+```
+
+Copying dumps, .env files etc.:
+
+```bash
+scp <file> user@host:/home/user/projects/homelab-compose/...
 ```

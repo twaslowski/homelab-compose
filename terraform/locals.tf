@@ -1,7 +1,7 @@
 locals {
   urls = {
     memos = {
-      hostname = "memos-b.${var.cloudflare_domain}"
+      hostname = "memos.${var.domain}"
       service  = "http://memos:5230"
     }
   }

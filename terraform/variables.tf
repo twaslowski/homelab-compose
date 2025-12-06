@@ -14,7 +14,7 @@ variable "cloudflare_zone_id" {
   type        = string
 }
 
-variable "cloudflare_domain" {
+variable "domain" {
   description = "The domain name for the homelab services."
   type        = string
 }
