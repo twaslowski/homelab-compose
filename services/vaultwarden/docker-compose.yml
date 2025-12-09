@@ -1,38 +1,37 @@
 ---
-version: '3'
 services:
   vaultwarden:
     image: vaultwarden/server:1.34.3
     container_name: vaultwarden
     restart: always
-    environment:
-      TZ: Europe/Berlin
+    env_file: [.env]
+    volumes:
+      - type: bind
+        source: ${HOMELAB_DATA_ROOT_DIR}/vaultwarden/data
+        target: /data
+        bind:
+          create_host_path: true
     networks: [homelab, vaultwarden]
+    ports: [8080:8080]
   postgres:
     image: postgres:18-alpine
     container_name: homelab_postgres
     restart: unless-stopped
-    environment:
-      - POSTGRES_USER=${VAULTWARDEN_DB_USER}
-      - POSTGRES_PASSWORD=${VAULTWARDEN_DB_PASSWORD}
-      - POSTGRES_DB=${VAULTWARDEN_DB_NAME}
-    volumes: [vaultwarden-pgdata:/var/lib/postgresql/data]
+    env_file: [.env]
+    user: "999:999"
+    volumes:
+      - type: bind
+        source: ${HOMELAB_DATA_ROOT_DIR}/vaultwarden/postgres-data
+        target: /var/lib/postgresql/data
+        bind:
+          create_host_path: true
     networks: [vaultwarden]
     healthcheck:
-      test:
-        - CMD-SHELL
-        - pg_isready -U ${VAULTWARDEN_DB_USER} -d ${VAULTWARDEN_DB_NAME}
+      test: ["CMD-SHELL", "pg_isready -U vaultwarden -d vaultwarden"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 10s
-volumes:
-  vaultwarden-pgdata:
-    driver: local
-    driver_opts:
-      o: bind
-      type: none
-      device: /Users/tobias.waslowski/projects/personal/homelab-2/data/vaultwarden/postgres
 networks:
   homelab:
     external: true

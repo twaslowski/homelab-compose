@@ -1,4 +1,4 @@
-resource "cloudflare_dns_record" "memos" {
+resource "cloudflare_dns_record" "record" {
   for_each = local.urls
 
   name    = each.value.hostname

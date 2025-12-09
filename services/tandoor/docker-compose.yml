@@ -1,0 +1,55 @@
+---
+services:
+  tandoor:
+    restart: always
+    image: vabene1111/recipes
+    volumes:
+      - staticfiles:/opt/recipes/staticfiles
+      - mediafiles:/opt/recipes/mediafiles
+    env_file: [.env, ../../.env]
+    depends_on: [postgres]
+    networks: [tandoor, homelab]
+  postgres:
+    image: postgres:18-alpine
+    container_name: tandoor-postgres
+    restart: unless-stopped
+    volumes: [tandoor-pgdata:/var/lib/postgresql/data]
+    env_file: [.env, ../../.env]
+    networks: [tandoor]
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+  nginx:
+    image: nginx:mainline-alpine
+    restart: always
+    env_file: [.env]
+    ports: [8080:80]
+    volumes:
+      - nginx_config:/etc/nginx/conf.d:ro
+      - mediafiles:/media
+      - staticfiles:/static
+volumes:
+  staticfiles:
+  nginx_config:
+  tandoor-pgdata:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ${HOMELAB_DATA_ROOT_DIR}/tandoor/postgres
+  mediafiles:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ${HOMELAB_DATA_ROOT_DIR}/tandoor/media
+networks:
+  homelab:
+    external: true
+    name: ${HOMELAB_NETWORK:-homelab}
+  tandoor:
+    driver: bridge
+    name: tandoor-internal

@@ -4,10 +4,14 @@ services:
     image: neosmemo/memos:latest
     container_name: memos
     restart: unless-stopped
-    environment:
-      - MEMOS_DRIVER=postgres
-      - MEMOS_DSN=postgresql://${MEMOS_DB_USER}:${MEMOS_DB_PASSWORD}@postgres:5432/${MEMOS_DB_NAME}?sslmode=disable
-    volumes: [memos-data:/var/opt/memos]
+    env_file:
+      - .env
+    volumes:
+      - type: bind
+        source: ${HOMELAB_DATA_ROOT_DIR}/memos/memos-data
+        target: /data
+        bind:
+          create_host_path: true
     networks: [homelab, memos]
     depends_on:
       postgres:
@@ -23,28 +27,23 @@ services:
     ports: [5230:5230]
   postgres:
     image: postgres:18-alpine
-    container_name: homelab_postgres
+    container_name: memos-postgres
     restart: unless-stopped
-    environment:
-      - POSTGRES_USER=${MEMOS_DB_USER}
-      - POSTGRES_PASSWORD=${MEMOS_DB_PASSWORD}
-      - POSTGRES_DB=${MEMOS_DB_NAME}
-    volumes: [memos-pgdata:/var/lib/postgresql/data]
+    env_file:
+      - .env
+    volumes:
+      - type: bind
+        source: ${HOMELAB_DATA_ROOT_DIR}/memos/postgres-data
+        target: /var/lib/postgresql/data
+        bind:
+          create_host_path: true
     networks: [memos]
     healthcheck:
-      test: [CMD-SHELL, 'pg_isready -U ${MEMOS_DB_USER} -d ${MEMOS_DB_NAME}']
+      test: [CMD-SHELL, 'pg_isready -U memos -d memos']
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 10s
-volumes:
-  memos-pgdata:
-    driver: local
-    driver_opts:
-      o: bind
-      type: none
-      device: ${HOMELAB_DATA_ROOT_DIR}/memos/postgres
-  memos-data:
 networks:
   homelab:
     external: true
