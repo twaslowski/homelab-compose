@@ -8,9 +8,9 @@ Requires=docker.service cloudflared.service
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-WorkingDirectory=/Users/tobias.waslowski/projects/personal/homelab-2/services/tandoor
-EnvironmentFile=/Users/tobias.waslowski/projects/personal/homelab-2/.env
-EnvironmentFile=/Users/tobias.waslowski/projects/personal/homelab-2/services/tandoor/.env
+WorkingDirectory=/home/tobi/projects/homelab-compose/services/tandoor
+EnvironmentFile=/home/tobi/projects/homelab-compose/.env
+EnvironmentFile=/home/tobi/projects/homelab-compose/services/tandoor/.env
 ExecStartPre=/usr/local/bin/docker-compose down
 ExecStart=/usr/local/bin/docker-compose up -d
 ExecStop=/usr/local/bin/docker-compose down
