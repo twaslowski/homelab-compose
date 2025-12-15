@@ -32,3 +32,14 @@ tasks:
     cmds:
       - terraform init
       - terraform apply -var-file=config/var.tfvars
+
+  sync-env:
+    desc: Sync all .env files to remote homelab server
+    dotenv:
+      - .env
+    cmds:
+      - scp .env $HOMELAB_USER@$HOMELAB_HOST:$HOMELAB_PROJECT_ROOT_DIR/.env
+      - scp services/cloudflared/.env $HOMELAB_USER@$HOMELAB_HOST:$HOMELAB_PROJECT_ROOT_DIR/services/cloudflared/.env
+      - scp services/memos/.env $HOMELAB_USER@$HOMELAB_HOST:$HOMELAB_PROJECT_ROOT_DIR/services/memos/.env
+      - scp services/tandoor/.env $HOMELAB_USER@$HOMELAB_HOST:$HOMELAB_PROJECT_ROOT_DIR/services/tandoor/.env
+      - scp services/vaultwarden/.env $HOMELAB_USER@$HOMELAB_HOST:$HOMELAB_PROJECT_ROOT_DIR/services/vaultwarden/.env

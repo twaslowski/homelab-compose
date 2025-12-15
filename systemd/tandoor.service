@@ -1,0 +1,24 @@
+[Unit]
+Description=Tandoor Recipes Service
+Documentation=https://docs.tandoor.dev
+After=cloudflared.service
+Wants=cloudflared.service
+Requires=docker.service cloudflared.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=/Users/tobias.waslowski/projects/personal/homelab-2/services/tandoor
+EnvironmentFile=/Users/tobias.waslowski/projects/personal/homelab-2/.env
+EnvironmentFile=/Users/tobias.waslowski/projects/personal/homelab-2/services/tandoor/.env
+ExecStartPre=/usr/local/bin/docker-compose down
+ExecStart=/usr/local/bin/docker-compose up -d
+ExecStop=/usr/local/bin/docker-compose down
+ExecReload=/usr/local/bin/docker-compose restart
+TimeoutStartSec=300
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+
