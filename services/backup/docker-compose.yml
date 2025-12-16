@@ -1,0 +1,16 @@
+services:
+  backup:
+    image: rclone/rclone:latest
+    container_name: memos-backup
+    restart: unless-stopped
+    environment:
+      - RCLONE_CONFIG_S3_TYPE=s3
+      - RCLONE_CONFIG_S3_PROVIDER=AWS
+      - RCLONE_CONFIG_S3_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - RCLONE_CONFIG_S3_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - RCLONE_CONFIG_S3_REGION=${AWS_REGION:-us-east-1}
+    volumes:
+      - type: bind
+        source: /Users/tobias.waslowski/projects/personal/homelab-2/data
+        target: /data
+    command: sync /data s3:${S3_BUCKET}/backups/homelab-compose --exclude '*.tmp' --log-level INFO

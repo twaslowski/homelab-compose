@@ -4,6 +4,7 @@ tasks:
     desc: Run a specific service
     dotenv:
       - .env
+      - services/{{index .MATCH 0}}/.env
     vars:
       service: "{{index .MATCH 0}}"
     cmds:
@@ -38,8 +39,8 @@ tasks:
     dotenv:
       - .env
     cmds:
-      - scp .env $HOMELAB_USER@$HOMELAB_HOST:$HOMELAB_PROJECT_ROOT_DIR/.env
       - scp services/cloudflared/.env $HOMELAB_USER@$HOMELAB_HOST:$HOMELAB_PROJECT_ROOT_DIR/services/cloudflared/.env
+      - scp services/backup/.env $HOMELAB_USER@$HOMELAB_HOST:$HOMELAB_PROJECT_ROOT_DIR/services/backup/.env
       - scp services/memos/.env $HOMELAB_USER@$HOMELAB_HOST:$HOMELAB_PROJECT_ROOT_DIR/services/memos/.env
       - scp services/tandoor/.env $HOMELAB_USER@$HOMELAB_HOST:$HOMELAB_PROJECT_ROOT_DIR/services/tandoor/.env
       - scp services/vaultwarden/.env $HOMELAB_USER@$HOMELAB_HOST:$HOMELAB_PROJECT_ROOT_DIR/services/vaultwarden/.env
