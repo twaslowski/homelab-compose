@@ -8,7 +8,7 @@ services:
       - .env
     volumes:
       - type: bind
-        source: ${HOMELAB_DATA_ROOT_DIR}/memos/memos-data
+        source: /opt/homelab/data/memos/memos-data
         target: /data
         bind:
           create_host_path: true
@@ -33,7 +33,7 @@ services:
       - .env
     volumes:
       - type: bind
-        source: ${HOMELAB_DATA_ROOT_DIR}/memos/postgres-data
+        source: /opt/homelab/data/memos/postgres-data
         target: /var/lib/postgresql/data
         bind:
           create_host_path: true

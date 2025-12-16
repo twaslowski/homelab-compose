@@ -11,6 +11,6 @@ services:
       - RCLONE_CONFIG_S3_REGION=${AWS_REGION:-us-east-1}
     volumes:
       - type: bind
-        source: /Users/tobias.waslowski/projects/personal/homelab-2/data
+        source: /opt/homelab/data
         target: /data
     command: sync /data s3:${S3_BUCKET}/backups/homelab-compose --exclude '*.tmp' --log-level INFO
