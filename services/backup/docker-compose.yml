@@ -1,7 +1,7 @@
 services:
   backup:
     image: rclone/rclone:latest
-    container_name: memos-backup
+    container_name: homelab-backup
     restart: unless-stopped
     environment:
       - RCLONE_CONFIG_S3_TYPE=s3
