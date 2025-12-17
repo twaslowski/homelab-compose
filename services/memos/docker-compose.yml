@@ -4,8 +4,7 @@ services:
     image: neosmemo/memos:latest
     container_name: memos
     restart: unless-stopped
-    env_file:
-      - .env
+    env_file: [.env]
     volumes:
       - type: bind
         source: /opt/homelab/data/memos/memos-data
@@ -29,8 +28,7 @@ services:
     image: postgres:18-alpine
     container_name: memos-postgres
     restart: unless-stopped
-    env_file:
-      - .env
+    env_file: [.env]
     volumes:
       - type: bind
         source: /opt/homelab/data/memos/postgres-data
@@ -39,7 +37,7 @@ services:
           create_host_path: true
     networks: [memos]
     healthcheck:
-      test: [CMD-SHELL, 'pg_isready -U memos -d memos']
+      test: [CMD-SHELL, pg_isready -U memos -d memos]
       interval: 10s
       timeout: 5s
       retries: 5

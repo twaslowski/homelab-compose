@@ -14,16 +14,15 @@ services:
         target: /opt/recipes/staticfiles
         bind:
           create_host_path: true
-    env_file:
-      - .env
+    env_file: [.env]
+    ports: [8080:80]
     depends_on: [postgres]
     networks: [tandoor, homelab]
   postgres:
     image: postgres:18-alpine
     container_name: tandoor-postgres
     restart: unless-stopped
-    env_file:
-      - .env
+    env_file: [.env]
     volumes:
       - type: bind
         source: /opt/homelab/data/tandoor/postgres
@@ -37,24 +36,6 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
-  nginx:
-    image: nginx:mainline-alpine
-    restart: always
-    env_file: 
-      - .env
-    ports: [8080:80]
-    volumes:
-      - nginx_config:/etc/nginx/conf.d:ro
-      - type: bind
-        source: /opt/homelab/data/tandoor/media
-        target: /opt/recipes/mediafiles
-        bind:
-          create_host_path: true
-      - type: bind
-        source: /opt/homelab/data/tandoor/static
-        target: /opt/recipes/staticfiles
-        bind:
-          create_host_path: true
 volumes:
   nginx_config:
 networks:
