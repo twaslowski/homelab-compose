@@ -7,7 +7,7 @@ services:
     env_file: [.env]
     volumes:
       - type: bind
-        source: ${HOMELAB_DATA_ROOT_DIR}/vaultwarden/data
+        source: /opt/homelab/data/vaultwarden/data
         target: /data
         bind:
           create_host_path: true
@@ -21,7 +21,7 @@ services:
     user: "999:999"
     volumes:
       - type: bind
-        source: ${HOMELAB_DATA_ROOT_DIR}/vaultwarden/postgres-data
+        source: /opt/homelab/data/vaultwarden/postgres-data
         target: /var/lib/postgresql/data
         bind:
           create_host_path: true

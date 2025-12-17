@@ -4,17 +4,32 @@ services:
     restart: always
     image: vabene1111/recipes
     volumes:
-      - staticfiles:/opt/recipes/staticfiles
-      - mediafiles:/opt/recipes/mediafiles
-    env_file: [.env, ../../.env]
+      - type: bind
+        source: /opt/homelab/data/tandoor/media
+        target: /opt/recipes/mediafiles
+        bind:
+          create_host_path: true
+      - type: bind
+        source: /opt/homelab/data/tandoor/static
+        target: /opt/recipes/staticfiles
+        bind:
+          create_host_path: true
+    env_file:
+      - .env
     depends_on: [postgres]
     networks: [tandoor, homelab]
   postgres:
     image: postgres:18-alpine
     container_name: tandoor-postgres
     restart: unless-stopped
-    volumes: [tandoor-pgdata:/var/lib/postgresql/data]
-    env_file: [.env, ../../.env]
+    env_file:
+      - .env
+    volumes:
+      - type: bind
+        source: /opt/homelab/data/tandoor/postgres
+        target: /var/lib/postgresql/data
+        bind:
+          create_host_path: true
     networks: [tandoor]
     healthcheck:
       test: [CMD-SHELL, 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
@@ -25,27 +40,23 @@ services:
   nginx:
     image: nginx:mainline-alpine
     restart: always
-    env_file: [.env]
+    env_file: 
+      - .env
     ports: [8080:80]
     volumes:
       - nginx_config:/etc/nginx/conf.d:ro
-      - mediafiles:/media
-      - staticfiles:/static
+      - type: bind
+        source: /opt/homelab/data/tandoor/media
+        target: /opt/recipes/mediafiles
+        bind:
+          create_host_path: true
+      - type: bind
+        source: /opt/homelab/data/tandoor/static
+        target: /opt/recipes/staticfiles
+        bind:
+          create_host_path: true
 volumes:
-  staticfiles:
   nginx_config:
-  tandoor-pgdata:
-    driver: local
-    driver_opts:
-      o: bind
-      type: none
-      device: ${HOMELAB_DATA_ROOT_DIR}/tandoor/postgres
-  mediafiles:
-    driver: local
-    driver_opts:
-      o: bind
-      type: none
-      device: ${HOMELAB_DATA_ROOT_DIR}/tandoor/media
 networks:
   homelab:
     external: true

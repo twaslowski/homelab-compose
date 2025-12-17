@@ -2,6 +2,8 @@ services:
   backup:
     image: rclone/rclone:latest
     container_name: homelab-backup
+    env_file:
+      - .env
     environment:
       - RCLONE_CONFIG_S3_TYPE=s3
       - RCLONE_CONFIG_S3_PROVIDER=AWS
