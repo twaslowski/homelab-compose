@@ -6,7 +6,7 @@ locals {
     }
     recipes = {
       hostname = "recipes.${var.domain}"
-      service  = "http://tandoor:8080"
+      service  = "http://tandoor:80"
     }
     vaultwarden = {
       hostname = "passwords.${var.domain}"

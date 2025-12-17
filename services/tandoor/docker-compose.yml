@@ -15,7 +15,6 @@ services:
         bind:
           create_host_path: true
     env_file: [.env]
-    ports: [8080:80]
     depends_on: [postgres]
     networks: [tandoor, homelab]
   postgres:

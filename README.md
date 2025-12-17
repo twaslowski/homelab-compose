@@ -45,26 +45,23 @@ docker-compose has several key benefits over Kubernetes for this use case:
 
 Migrate services:
 
-- [ ] Memos
+- [x] Memos
   - [x] Set up docker-compose.yml
   - [x] Migrate data from cloudnative-pg to local Postgres
-  - [ ] systemd service
-  - [ ] Backup strategy
+  - [x] systemd service
+  - [x] Backup strategy
 - [ ] paperless-ngx
   - [ ] Set up docker-compose.yml
   - [ ] Migrate data from cloudnative-pg to local Postgres
   - [ ] systemd service
-  - [ ] Backup strategy
 - [ ] Vaultwarden
   - [ ] Set up docker-compose.yml
   - [ ] Migrate data from cloudnative-pg to local Postgres
   - [ ] systemd service
-  - [ ] Backup strategy
-- [ ] Tandoor
-  - [ ] Set up docker-compose.yml
-  - [ ] Migrate data from cloudnative-pg to local Postgres
-  - [ ] systemd service
-  - [ ] Backup strategy
+- [x] Tandoor
+  - [x] Set up docker-compose.yml
+  - [x] Migrate data from cloudnative-pg to local Postgres
+  - [x] systemd service
 
 ## Runbook
 
