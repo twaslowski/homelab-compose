@@ -3,6 +3,7 @@ services:
   backup:
     image: rclone/rclone:latest
     container_name: homelab-backup
+    restart: unless-stopped
     env_file: [.env]
     environment:
       - RCLONE_CONFIG_S3_TYPE=s3
@@ -14,5 +15,6 @@ services:
       - type: bind
         source: /opt/homelab/data
         target: /data
-    command: sync /data s3:${S3_BUCKET}/backups/homelab-compose --exclude '*.tmp'
-      --log-level INFO
+    entrypoint: /bin/sh
+    command: -c "while true; do rclone sync /data s3:${S3_BUCKET}/backups/homelab-compose
+      --exclude '*.tmp' --log-level INFO; sleep 43200; done"
