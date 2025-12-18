@@ -20,8 +20,21 @@ discovery.relabel "cadvisor" {
     }
 }
 
-// Host system metrics (CPU, memory, filesystem)
 prometheus.exporter.unix "host" {
+}
+
+discovery.relabel "unix_metrics" {
+  targets = prometheus.exporter.unix.host.targets
+
+  rule {
+    target_label = "job"
+    replacement  = "integrations/node_exporter"
+  }
+
+  rule {
+    target_label = "instance"
+    replacement  = constants.hostname
+  }
 }
 
 prometheus.scrape "unix_scraper" {
