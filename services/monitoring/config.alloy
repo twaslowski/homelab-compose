@@ -2,12 +2,26 @@
 // #### Metrics Configuration ####
 // ###############################
 
-// Host Cadvisor on the Docker socket to expose container metrics.
-prometheus.exporter.cadvisor "example" {
+prometheus.exporter.cadvisor "cadvisor" {
   docker_only = true
+
+  // Disable metrics you likely don't need
+  disable_metrics = [
+    "disk",
+    "diskIO",
+    "tcp",
+    "udp",
+    "percpu",
+    "sched",
+    "process",
+    "hugetlb",
+  ]
+
+  // Only collect essential container metrics
+  store_container_labels = false
 }
 
-discovery.relabel "example" {
+discovery.relabel "cadvisor" {
     targets = prometheus.exporter.cadvisor.example.targets
 
     rule {
@@ -19,6 +33,50 @@ discovery.relabel "example" {
         target_label = "instance"
         replacement  = constants.hostname
     }
+}
+
+// Host system metrics (CPU, memory, filesystem)
+prometheus.exporter.unix "host" {
+  filesystem {
+    enabled = true
+    mount_points_exclude = "^/(dev|proc|sys|var/lib/docker/.+|var/lib/kubelet/.+)($|/)"
+  }
+
+  cpu {
+    enabled = true
+  }
+
+  meminfo {
+    enabled = true
+  }
+
+  netdev {
+    enabled = true
+  }
+
+  diskstats {
+    enabled = true
+  }
+}
+
+discovery.relabel "unix_metrics" {
+  targets = prometheus.exporter.unix.host.targets
+
+  rule {
+    target_label = "job"
+    replacement  = "integrations/node_exporter"
+  }
+
+  rule {
+    target_label = "instance"
+    replacement  = constants.hostname
+  }
+}
+
+prometheus.scrape "unix_scraper" {
+  targets         = discovery.relabel.unix_metrics.output
+  forward_to      = [prometheus.remote_write.demo.receiver]
+  scrape_interval = "15s"
 }
 
 // Configure a prometheus.scrape component to collect cadvisor metrics.

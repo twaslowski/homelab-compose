@@ -8,6 +8,10 @@ locals {
       hostname = "recipes.${var.domain}"
       service  = "http://tandoor:80"
     }
+    grafana = {
+      hostname = "grafana.${var.domain}"
+      service  = "http://grafana:3000"
+    }
     vaultwarden = {
       hostname = "passwords.${var.domain}"
       service  = "http://vaultwarden:8080"
