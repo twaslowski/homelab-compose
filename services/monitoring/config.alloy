@@ -22,40 +22,6 @@ discovery.relabel "cadvisor" {
 
 // Host system metrics (CPU, memory, filesystem)
 prometheus.exporter.unix "host" {
-  filesystem {
-    enabled = true
-    mount_points_exclude = "^/(dev|proc|sys|var/lib/docker/.+|var/lib/kubelet/.+)($|/)"
-  }
-
-  cpu {
-    enabled = true
-  }
-
-  meminfo {
-    enabled = true
-  }
-
-  netdev {
-    enabled = true
-  }
-
-  diskstats {
-    enabled = true
-  }
-}
-
-discovery.relabel "unix_metrics" {
-  targets = prometheus.exporter.unix.host.targets
-
-  rule {
-    target_label = "job"
-    replacement  = "integrations/node_exporter"
-  }
-
-  rule {
-    target_label = "instance"
-    replacement  = constants.hostname
-  }
 }
 
 prometheus.scrape "unix_scraper" {
