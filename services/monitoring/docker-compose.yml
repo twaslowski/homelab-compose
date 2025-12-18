@@ -3,10 +3,12 @@ services:
   loki:
     image: grafana/loki:${GRAFANA_LOKI_VERSION:-3.5.2}
     ports: [3100:3100]
+    networks: [monitoring]
     volumes: [./loki-config.yaml:/etc/loki/local-config.yaml]
     command: -config.file=/etc/loki/local-config.yaml
   prometheus:
     image: prom/prometheus:${PROMETHEUS_VERSION:-v3.5.0}
+    networks: [monitoring]
     command:
       - --web.enable-remote-write-receiver
       - --config.file=/etc/prometheus/prometheus.yml
@@ -18,7 +20,7 @@ services:
       - GF_AUTH_ANONYMOUS_ENABLED=true
       - GF_AUTH_BASIC_ENABLED=false
     ports: [3000:3000/tcp]
-    networks: [homelab]
+    networks: [homelab, monitoring]
     entrypoint:
       - sh
       - -euc
@@ -50,6 +52,7 @@ services:
     image: grafana/alloy:${GRAFANA_ALLOY_VERSION:-v1.10.0}
     privileged: true
     ports: [12345:12345, 4317:4317, 4318:4318]
+    networks: [monitoring]
     volumes:
       - ./config.alloy:/etc/alloy/config.alloy
       - /var/run/docker.sock:/var/run/docker.sock
@@ -64,3 +67,6 @@ networks:
   homelab:
     external: true
     name: ${HOMELAB_NETWORK:-homelab}
+  monitoring:
+    driver: bridge
+    name: monitoring-internal
