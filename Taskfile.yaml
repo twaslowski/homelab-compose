@@ -19,6 +19,16 @@ tasks:
     cmds:
       - docker compose -f services/{{.service}}/docker-compose.yml down
 
+  restart:*:
+    desc: Run a specific service
+    dotenv:
+      - .env
+    vars:
+      service: "{{index .MATCH 0}}"
+    cmds:
+      - docker compose -f services/{{.service}}/docker-compose.yml restart
+
+
   fmt:
     desc: Run formatter
     cmds:
